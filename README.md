@@ -20,5 +20,7 @@ Comment arguments disponibles, vous avez :
 - `mention`, qui s'occupera de répondre aux mentions
 - `messages`, qui s'occupera de répondre aux messages privés
 
+## Fonctionnement 
 
+Le script génère un nombre aléatoire et grâce à un algorithme incroyable de ouf, il séléctionne l'une des réponses grâce à leur indice de référence.
 
