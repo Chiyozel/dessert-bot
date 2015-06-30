@@ -1,4 +1,5 @@
-# dessert-bot
-Dessert Bot v2
+# Dessert Bot v2
 
-LE DESSERT
+Un bot qui aime beaucoup le dessert.
+
+## Utilisation
