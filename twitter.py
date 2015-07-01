@@ -1,3 +1,5 @@
+# coding: utf8
+import base64
 import logging
 import time
 import json
@@ -79,19 +81,36 @@ def get_timeline_tweets_since(since_id=-1):
     
     return tweets
 
-def post_tweet(text, replyID):
-    if replyID == None:
-        urlArgs = urllib.urlencode([("status", unicode(text).encode('utf-8'))])
-    else:
-        urlArgs = urllib.urlencode([("status", unicode(text).encode('utf-8')), ("in_reply_to_status_id", replyID)])
+def post_tweet(text, replyID = None, mediaID = None):
+	args = [("status", unicode(text).encode('utf-8'))]
+	
+	if replyID != None : args.append(("in_reply_to_status_id", replyID))
+	if mediaID != None : args.append(("media_ids", mediaID))
 
-    client = oauth.Client(twitter_settings.consumer, twitter_settings.token)
-    resp, content = client.request("https://api.twitter.com/1.1/statuses/update.json", "POST", urlArgs)
-    
-    if resp.status != 200:
-        raise TwitterError(resp.status, content)
-    
-    return content
+	urlArgs = urllib.urlencode(args)
+
+	client = oauth.Client(twitter_settings.consumer, twitter_settings.token)
+	resp, content = client.request("https://api.twitter.com/1.1/statuses/update.json", "POST", urlArgs)
+	
+	if resp.status != 200:
+		raise TwitterError(resp.status, content)
+	
+	return content
+	
+def post_photo(text, imagePath, replyID = None):
+	file = open(imagePath, 'rb')
+	data = base64.b64encode(file.read())
+	
+	urlArgs = urllib.urlencode([("media_data", data)])
+	
+	client = oauth.Client(twitter_settings.consumer, twitter_settings.token)
+	resp, content = client.request("https://upload.twitter.com/1.1/media/upload.json", "POST", urlArgs)
+	
+	if resp.status != 200:
+		raise TwitterError(resp.status, content)
+	else:
+		return post_tweet(text, replyID, json.loads(content)['media_id_string'])
+	
 
 def follow_user(screen_name):
     client = oauth.Client(twitter_settings.consumer, twitter_settings.token)

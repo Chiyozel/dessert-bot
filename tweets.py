@@ -11,7 +11,8 @@ import random
 def process_status():
 	try:
 		#print(pick_random_tweet())
-		twitter.post_tweet(pick_random_tweet(), None)
+		twitter.post_tweet(pick_random_tweet())
+		#twitter.post_photo("LE DAYUM.", "images/dessertdayum.png")
 	
 	except IOError as e:
 		print("Erreur de lecture du fichier csv.")
