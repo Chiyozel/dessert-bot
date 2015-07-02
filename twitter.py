@@ -108,10 +108,29 @@ def post_photo(text, imagePath, replyID = None):
 	
 	if resp.status != 200:
 		raise TwitterError(resp.status, content)
-	else:
-		return post_tweet(text, replyID, json.loads(content)['media_id_string'])
 	
-
+	return post_tweet(text, replyID, json.loads(content)['media_id_string'])
+	
+def retweet_tweet(idTweet):
+	print(idTweet)
+	client = oauth.Client(twitter_settings.consumer, twitter_settings.token)
+	resp, content = client.request("https://api.twitter.com/1.1/statuses/retweet/{}.json".format(idTweet), "POST")
+	if resp.status != 200:
+		raise TwitterError(resp.status, content)
+	
+	return json.loads(content)
+		
+def search_tweet(text, nombreTweets = 1):
+	urlArgs = urllib.urlencode([("q", unicode(text).encode('utf-8')),("count",nombreTweets)])
+	
+	client = oauth.Client(twitter_settings.consumer, twitter_settings.token)
+	resp, content = client.request("https://api.twitter.com/1.1/search/tweets.json?{}".format(urlArgs), "GET")
+	
+	if resp.status != 200:
+		raise TwitterError(resp.status, content)
+	
+	return json.loads(content)
+	
 def follow_user(screen_name):
     client = oauth.Client(twitter_settings.consumer, twitter_settings.token)
     resp, content = client.request("https://api.twitter.com/1.1/friendships/create.json", "POST", urllib.urlencode([("screen_name", screen_name)]))

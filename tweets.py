@@ -22,7 +22,7 @@ def process_status():
 		
 	
 def pick_random_tweet():
-	file = open('tweetsDessert.csv', 'rb')
+	file = open('/home/pi/twitterBots/dessert/tweetsDessert.csv', 'rb')
 	liste = map(tuple, csv.reader(file))
 	
 	somme_probas = sum([int(temp[1]) for temp in liste])
@@ -39,6 +39,13 @@ def pick_random_tweet():
 	
 def process_mentions():
 	print("Oui")
+	
+def process_retweet():
+	retour = twitter.search_tweet("le dessert")
+	
+	# print(json.dumps(retour, sort_keys=True, indent=4, separators=(',', ': ')))
+	
+	twitter.retweet_tweet(retour['statuses'][0]['id_str'])
 	
 def process_mps():
 	print("Le footballeur")
