@@ -38,48 +38,13 @@ def get_tweets(screen_name, auth=True):
         client = oauth.Client(twitter_settings.consumer, twitter_settings.token)
     else:
         client = httplib2.Http(timeout=30)
-    
-    
+
     resp, content = client.request('https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' + screen_name + '&count=800&trim_user=true', "GET")
     
     if resp.status != 200:
         raise TwitterError(resp.status, content)
     
     return json.loads(content)
-
-def get_timeline_tweets(count):
-    client = oauth.Client(twitter_settings.consumer, twitter_settings.token)
-    
-    resp, content = client.request('https://api.twitter.com/1.1/statuses/home_timeline.json?count=' + str(count), "GET")
-    
-    if resp.status != 200:
-        raise TwitterError(resp.status, content)
-    
-    return json.loads(content)
-
-def get_timeline_tweets_since(since_id=-1):
-    client = oauth.Client(twitter_settings.consumer, twitter_settings.token)
-    tweets = []
-    
-    if since_id < 0:
-        resp, content = client.request('https://api.twitter.com/1.1/statuses/home_timeline.json', "GET")
-        
-        if resp.status != 200:
-            raise TwitterError(resp.status, content)
-        
-        tweets.extend(json.loads(content))
-    else:
-        # TODO 1 or 0?
-        current_page = 0
-        while len(tweets) == 0 or not since_id >= max(map(lambda t:int(t['id']), tweets)):
-            resp, content = client.request('https://api.twitter.com/1.1/statuses/home_timeline.json?count=800&page=' + str(current_page), "GET")
-            new_tweets = json.loads(content)
-            if len(new_tweets) == 0:
-                break
-            tweets.extend(new_tweets)
-            current_page += 1
-    
-    return tweets
 
 def post_tweet(text, replyID = None, mediaID = None):
 	args = [("status", unicode(text).encode('utf-8'))]

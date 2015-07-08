@@ -18,7 +18,7 @@ def process_status():
 		print("Erreur de lecture du fichier csv.")
 		
 	except TwitterError as te:
-		print("Erreur de post du statut.\n" + te.content)
+		print("Erreur lors de l'envoi du statut\n" + te.content)
 		
 	
 def pick_random_tweet():
