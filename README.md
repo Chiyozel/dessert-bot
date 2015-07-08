@@ -1,5 +1,7 @@
 # Dessert Bot v2
 
+![DESSERT](bestdessert.jpeg)
+
 Un bot qui aime beaucoup le dessert.
 
 ## Installation
