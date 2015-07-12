@@ -47,7 +47,8 @@ def get_tweets(screen_name, auth=True):
     return json.loads(content)
 
 def post_tweet(text, replyID = None, mediaID = None):
-	args = [("status", unicode(text).encode('utf-8'))]
+	print(text)
+	args = [("status", text)]
 	
 	if replyID != None : args.append(("in_reply_to_status_id", replyID))
 	if mediaID != None : args.append(("media_ids", mediaID))
@@ -61,8 +62,8 @@ def post_tweet(text, replyID = None, mediaID = None):
 		raise TwitterError(resp.status, content)
 	
 	return content
-	
-def post_photo(text, imagePath, replyID = None):
+
+def upload_photo(imagePath):
 	file = open(imagePath, 'rb')
 	data = base64.b64encode(file.read())
 	
@@ -73,8 +74,11 @@ def post_photo(text, imagePath, replyID = None):
 	
 	if resp.status != 200:
 		raise TwitterError(resp.status, content)
+
+	return json.loads(content)['media_id_string']
 	
-	return post_tweet(text, replyID, json.loads(content)['media_id_string'])
+def post_photo(text, imagePath, replyID = None):	
+	return post_tweet(text, replyID, upload_photo(imagePath))
 	
 def retweet_tweet(idTweet):
 	print(idTweet)
@@ -95,20 +99,3 @@ def search_tweet(text, nombreTweets = 1):
 		raise TwitterError(resp.status, content)
 	
 	return json.loads(content)
-	
-def follow_user(screen_name):
-    client = oauth.Client(twitter_settings.consumer, twitter_settings.token)
-    resp, content = client.request("https://api.twitter.com/1.1/friendships/create.json", "POST", urllib.urlencode([("screen_name", screen_name)]))
-    
-    # TODO Check status code
-    
-    return content
-
-def get_rate_limit_status(auth=True):
-    if auth:
-        client = oauth.Client(twitter_settings.consumer, twitter_settings.token)
-    else:
-        client = httplib2.Http(timeout=30)
-    resp, content = client.request('https://api.twitter.com/1.1/application/rate_limit_status.json', "GET")
-    
-    return json.loads(content)
