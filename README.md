@@ -23,6 +23,14 @@ Comment arguments disponibles, vous avez :
 - `-mp`, qui s'occupera de répondre aux messages privés
 - `-r`, qui s'occupera de retweeter un post contenant "LE DESSERT"
 
+Pour automatiser le script vous pouvez utiliser une commande cron.
+
+Exemple (utilisé par LEDESSERT)
+
+`30 12,20 * * * python /home/pi/twitterBots/dessert/dessert.py -s >> /home/pi/twitterBots/dessert/logsDessert`
+`0 */9 * * *     python /home/pi/twitterBots/dessert/dessert.py -r >> /home/pi/twitterBots/dessert/logsDessert`
+`*/10 * * * *    python /home/pi/twitterBots/dessert/dessert.py -m >> /home/pi/twitterBots/dessert/logsDessert`
+
 ## Fonctionnement 
 
 Le script génère un nombre aléatoire et grâce à un algorithme incroyable de ouf, il séléctionne l'une des réponses grâce à leur indice de référence.
