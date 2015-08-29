@@ -17,7 +17,7 @@ else:
 		tweets.process_status()
 		print("Post du statut complété.")
 		
-	elif sys.argv[1] == "-m":
+	elif sys.argv[1] == "-m": 
 		print("Traitement des mentions en cours ({})".format(time.strftime("%c")))
 		tweets.process_mentions()
 		print("Traitement des mentions complété.")

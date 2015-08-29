@@ -62,7 +62,6 @@ def process_mentions():
 		fout.truncate()
 		fout.write(str(mention['id']))
 		fout.close()
-	
 
 def process_retweet():
 	retour = twitter.search_tweet("le dessert")
@@ -99,8 +98,8 @@ def dessert_waifu(tweet):
 
 	#if len(waifuSelected) <= 2: # S'il n'y a pas de media_id, on uploade l'image
 	media_id = twitter.upload_photo("images/{}.jpg".format(idSel))
-	liste[idSel] += (media_id,)
-	save_csv(get_chemin('waifus'), liste)
+	#liste[idSel] += (media_id,)
+	#save_csv(get_chemin('waifus'), liste)
 	#else:
 	#	media_id = waifuSelected[2]
 
