@@ -123,7 +123,7 @@ def parle_avec_dessert(tweet):
 	# Ici, le tuple sélectionné sera sous la forme :
 	# (X début, Y début, X fin, Y fin, taille, caractères max par ligne, nom du fond, R, G, B, nom de la police utilisée)
 
-	fond = liste[random.randint(0, nombreFondsDessert-1)]
+	fond = liste[random.randint(1, nombreFondsDessert-1)]
 
 	image = gen_image(fond, "Enlève ta culotte, je suis pilote.")
 
