@@ -1,2 +1,1 @@
-"X début", "Y début", 	"X fin", 	"Y fin", 	"Taille de la police", "Nombre de caractères par ligne", 	"Nom de l'image",	"R", "V", "B",	"Nom de la police"
-0,			0,			400,		150,		60,						30,									"dessert1.jpg", 	255, 255, 255,	"impregnable.ttf"
+0,0,400,150,60,30,"dessert1.jpg", 255, 255, 255,"impregnable.ttf"
