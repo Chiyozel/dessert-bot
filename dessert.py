@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # coding: utf8
 
 import sys
@@ -31,6 +32,11 @@ else:
 		print("Début du retweet en cours ({})".format(time.strftime("%c")))
 		tweets.process_retweet()
 		print("Tweet retweeté.")
+
+	elif sys.argv[1] == "-t":
+		print("Début de la phase de test de la génération d'une image en cours.")
+		tweets.parle_avec_dessert("joj")
+		print("Image générée.")
 		
 	else:
 		print_usage()

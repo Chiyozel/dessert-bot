@@ -1,7 +1,11 @@
 # coding: utf8
 
 import twitter
+import textwrap
 from twitter import TwitterError
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw
 
 import csv
 import sys
@@ -13,6 +17,8 @@ def get_chemin(type):
 	if type == "tweetsDessert" : return '/home/pi/twitterBots/dessert/tweetsDessert.csv'
 	elif type == "sinceID" : return '/home/pi/twitterBots/dessert/sinceMentions.txt'
 	elif type == "waifus" : return '/home/pi/twitterBots/dessert/waifusDessert.csv'
+	elif type == "path" : return '/home/pi/twitterBots/dessert'
+	elif type == "fonds" : return '/home/pi/twitterBots/dessert/fondsDessert.csv'
 
 def process_status():
 	try:
@@ -64,7 +70,7 @@ def process_mentions():
 		fout.close()
 
 def process_retweet():
-	retour = twitter.search_tweet("le dessert")
+	retour = twitter.search_tweet("\"le dessert\"")
 	
 	# print(json.dumps(retour, sort_keys=True, indent=4, separators=(',', ': ')))
 	
@@ -96,12 +102,7 @@ def dessert_waifu(tweet):
 	waifuSelected = liste[idSel]
 	print(len(waifuSelected))
 
-	#if len(waifuSelected) <= 2: # S'il n'y a pas de media_id, on uploade l'image
-	media_id = twitter.upload_photo("images/{}.jpg".format(idSel))
-	#liste[idSel] += (media_id,)
-	#save_csv(get_chemin('waifus'), liste)
-	#else:
-	#	media_id = waifuSelected[2]
+	media_id = twitter.upload_photo("{}/images/{}.jpg".format(get_chemin("path"), idSel))
 
 	texteTweet = "@{} Votre waifu-dessert est : {} !".format(tweet['user']['screen_name'], waifuSelected[0])
 
@@ -110,6 +111,23 @@ def dessert_waifu(tweet):
 
 	except TwitterError as te:
 		print("Erreur lors de l'envoi du statut\n" + te.content)
+
+def parle_avec_dessert(tweet):
+	file = open(get_chemin('fonds'), 'rb')
+	
+	liste = map(tuple, csv.reader(file))
+
+	file.close()
+	nombreFondsDessert = len(liste)
+
+	# Ici, le tuple sélectionné sera sous la forme :
+	# (X début, Y début, X fin, Y fin, taille, caractères max par ligne, nom du fond, R, G, B, nom de la police utilisée)
+
+	fond = liste[random.randint(0, nombreFondsDessert-1)]
+
+	image = gen_image(fond, "Enlève ta culotte, je suis pilote.")
+
+	image.save(get_chemin("path") + '/images/essai.jpg')
 
 #######
 #	UTILITAIRES DIVERS
@@ -122,6 +140,43 @@ def save_csv(csv_path, liste):
 
 	for row in liste:
 		csv_out.writerow(row)
+
+def gen_image(tuple, texte, v_cent = True, h_cent = True):
+	img = Image.open("{}/images/{}".format(get_chemin("path"),tuple[6]))
+	draw = ImageDraw.Draw(img)
+
+	texte = texte.decode('utf-8')
+
+	# font = ImageFont.truetype(<font-file>, <font-size>)
+	font = ImageFont.truetype("{}/fonts/{}".format(get_chemin("path"), tuple[10]), int(tuple[4]), encoding="utf-8")
+	
+	# lines = [unicode(temp1, errors='replace') for temp1 in textwrap.wrap(texte, width=int(tuple[5]))]
+	lines = textwrap.wrap(texte, width=int(tuple[5]))
+
+	print(lines)
+	if(v_cent) : # Si le texte est centré verticalement
+		hauteurTotale = sum(h for l, h in [draw.textsize(temp.encode('utf-8')) for temp in lines])
+		#hauteurTotale = 200
+		offset = (int(tuple[1]) + int(tuple[3])) / 2 - (hauteurTotale / 2)
+	else :
+		offset = 0
+
+	for line in lines:
+		largeur, hauteur = font.getsize(line)
+
+		if(h_cent) : # Si le texte doit être centré horizontalement
+			x = (int(tuple[2]) + int(tuple[0])) / 2 - (largeur / 2)
+		else :
+			x = int(tuple[0])
+
+		y = offset
+
+		offset += hauteur
+		# draw.text((x, y),"Sample Text",(r,g,b))
+		draw.text((x, y), line, (int(tuple[7]),int(tuple[8]),int(tuple[9])), font=font)
+
+	return img
+
 
 def id_from_string(sentence):
 	"""
