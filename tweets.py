@@ -8,6 +8,7 @@ from PIL import ImageFont
 from PIL import ImageDraw
 
 import csv
+import cStringIO
 import sys
 import json
 import random
@@ -61,6 +62,9 @@ def process_mentions():
 		if "#waifu" in mention['text'] :
 			print("Ca contient waifu") #Debug
 			dessert_waifu(mention)
+		elif "#PD" in mention['text'] or "#dessertSays" in mention['text'] :
+			print("Ca contient dessertSays")
+			parle_avec_dessert(mention)
 		print ("Fin") #Debug
 
 		fout = file(get_chemin('sinceID'), "w+b")
@@ -125,9 +129,21 @@ def parle_avec_dessert(tweet):
 
 	fond = liste[random.randint(0, nombreFondsDessert-1)]
 
-	image = gen_image(fond, "Enlève ta culotte, je suis pilote.")
+	phrase = ' '.join([x for x in tweet['text'].split() if not "#PD" in x and not "@_LEDESSERT_" in x and not "#dessertSays" in x])
 
-	image.save(get_chemin("path") + '/images/essai.jpg')
+	image = gen_image(fond, phrase)
+
+	buf = cStringIO.StringIO()
+	image.save(buf, format='JPEG')
+
+	texteTweet = "@{} Je suis LE DESSERT, et j'approuve ce tweet.".format(tweet['user']['screen_name'])
+	media_id = twitter.upload_buffer_photo(buf.getvalue())
+
+	try :
+		twitter.post_tweet(texteTweet, tweet['id'], media_id)
+
+	except TwitterError as te:
+		print("Erreur lors de l'envoi du statut\n" + te.content)
 
 #######
 #	UTILITAIRES DIVERS
@@ -145,8 +161,10 @@ def gen_image(tuple, texte, v_cent = True, h_cent = True):
 	img = Image.open("{}/images/{}".format(get_chemin("path"),tuple[6]))
 	draw = ImageDraw.Draw(img)
 
-	texte = texte.decode('utf-8')
+	# texte = texte.decode('utf-8')
 
+	texte = u"\"{}\"".format(texte)
+	
 	# font = ImageFont.truetype(<font-file>, <font-size>)
 	font = ImageFont.truetype("{}/fonts/{}".format(get_chemin("path"), tuple[10]), int(tuple[4]), encoding="utf-8")
 	

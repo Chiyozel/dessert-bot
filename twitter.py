@@ -63,10 +63,8 @@ def post_tweet(text, replyID = None, mediaID = None):
 	
 	return content
 
-def upload_photo(imagePath):
-	file = open(imagePath, 'rb')
-	data = base64.b64encode(file.read())
-	
+def upload_buffer_photo(contenu):
+	data = base64.b64encode(contenu)
 	urlArgs = urllib.urlencode([("media_data", data)])
 	
 	client = oauth.Client(twitter_settings.consumer, twitter_settings.token)
@@ -76,6 +74,11 @@ def upload_photo(imagePath):
 		raise TwitterError(resp.status, content)
 
 	return json.loads(content)['media_id_string']
+
+def upload_photo(imagePath):
+	file = open(imagePath, 'rb')
+	
+	return upload_buffer_photo(file.read())
 	
 def post_photo(text, imagePath, replyID = None):	
 	return post_tweet(text, replyID, upload_photo(imagePath))
