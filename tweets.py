@@ -163,7 +163,7 @@ def gen_image(tuple, texte, v_cent = True, h_cent = True):
 
 	# texte = texte.decode('utf-8')
 
-	texte = u"\"{}\"".format(texte)
+	texte = unichr(171) + texte + unichr(187)
 	
 	# font = ImageFont.truetype(<font-file>, <font-size>)
 	font = ImageFont.truetype("{}/fonts/{}".format(get_chemin("path"), tuple[10]), int(tuple[4]), encoding="utf-8")
