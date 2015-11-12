@@ -59,10 +59,10 @@ def process_mentions():
 	mentions.reverse()
 
 	for mention in mentions:
-		if "#waifu" in mention['text'] :
+		if "#waifu" in mention['text'].lower() :
 			print("Ca contient waifu") #Debug
 			dessert_waifu(mention)
-		elif "#PD" in mention['text'] or "#dessertSays" in mention['text'] :
+		elif "#pd" in mention['text'].lower() or "#dessertsays" in mention['text'].lower() :
 			print("Ca contient dessertSays")
 			parle_avec_dessert(mention)
 		print ("Fin") #Debug
@@ -129,7 +129,7 @@ def parle_avec_dessert(tweet):
 
 	fond = liste[random.randint(0, nombreFondsDessert-1)]
 
-	phrase = ' '.join([x for x in tweet['text'].split() if not "#PD" in x and not "@_LEDESSERT_" in x and not "#dessertSays" in x])
+	phrase = ' '.join([x for x in tweet['text'].split() if not "#pd" in x.lower() and not "@_LEDESSERT_" in x and not "#dessertsays" in x.lower()])
 
 	image = gen_image(fond, phrase)
 
@@ -173,11 +173,12 @@ def gen_image(tuple, texte, v_cent = True, h_cent = True):
 
 	print(lines)
 	if(v_cent) : # Si le texte est centré verticalement
-		hauteurTotale = sum(h for l, h in [draw.textsize(temp.encode('utf-8')) for temp in lines])
+		hauteurTotale = sum(h for l, h in [draw.textsize(temp.encode('utf-8'), font) for temp in lines])
 		#hauteurTotale = 200
 		offset = (int(tuple[1]) + int(tuple[3])) / 2 - (hauteurTotale / 2)
+		print("Hauteur : {}, offset : {}".format(hauteurTotale, offset))
 	else :
-		offset = 0
+		offset = int(tuple[1])
 
 	for line in lines:
 		largeur, hauteur = font.getsize(line)

@@ -4,6 +4,7 @@
 import sys
 import tweets
 import time
+import csv
 
 def print_usage() :
 	print("USAGE : python dessert.py [argument]\n\t-s : Envoie le statut dessert\n\t-m : Analyse les mentions\n\t-mp : Répond aux messages privés\n\t-r : Retweete un tweet au hasard contenant \"LE DESSERT\"")
@@ -35,7 +36,13 @@ else:
 
 	elif sys.argv[1] == "-t":
 		print("Début de la phase de test de la génération d'une image en cours.")
-		tweets.parle_avec_dessert("joj")
+		file = open(tweets.get_chemin('fonds'), 'rb')
+		liste = map(tuple, csv.reader(file))
+		fond = liste[2]
+		image = tweets.gen_image(fond, u"Les PD c'est kawaii un peu.")
+
+		image.save('essai.jpg')
+		
 		print("Image générée.")
 		
 	else:
