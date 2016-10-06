@@ -46,6 +46,16 @@ def get_tweets(screen_name, auth=True):
     
     return json.loads(content)
 
+def get_tweet(tweetID):
+	client = oauth.Client(twitter_settings.consumer, twitter_settings.token)
+
+	resp, content = client.request('https://api.twitter.com/1.1/statuses/show/{}.json'.format(tweetID), "GET")
+
+	if resp.status != 200:
+		raise TwitterError(resp.status, content)
+    
+	return json.loads(content)
+
 def post_tweet(text, replyID = None, mediaID = None):
 	print(text)
 	args = [("status", text)]

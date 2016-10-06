@@ -15,39 +15,39 @@ import random
 import os.path
 
 def get_chemin(type):
-	if type == "tweetsDessert" : return '/home/pi/twitterBots/dessert/tweetsDessert.csv'
-	elif type == "sinceID" : return '/home/pi/twitterBots/dessert/sinceMentions.txt'
-	elif type == "waifus" : return '/home/pi/twitterBots/dessert/waifusDessert.csv'
-	elif type == "path" : return '/home/pi/twitterBots/dessert'
-	elif type == "fonds" : return '/home/pi/twitterBots/dessert/fondsDessert.csv'
+	if type == "path" : return '/home/pacha/twitterBots/dessert'
+	elif type == "sinceID" : return get_chemin('path') + '/sinceMentions.txt'
+	elif type == "waifus" : return get_chemin('path') + '/waifusDessert.csv'
+	elif type == "tweetsDessert" : return get_chemin('path') + '/tweetsDessert.csv'
+	elif type == "fonds" : return get_chemin('path') + '/fondsDessert.csv'
 
 def process_status():
 	try:
 		twitter.post_tweet(pick_random_tweet())
-	
+
 	except IOError as e:
-		print("Erreur de lecture du fichier csv.")
-		
+		print("Erreur de lecture du fichier csv." + str(e))
+
 	except TwitterError as te:
 		print("Erreur lors de l'envoi du statut\n" + te.content)
-		
+
 
 def pick_random_tweet():
 	file = open(get_chemin('tweetsDessert'), 'rb')
 	liste = map(tuple, csv.reader(file))
-	
+
 	somme_probas = sum([int(temp[1]) for temp in liste])
 	pif = random.randint(1,somme_probas)
-	
+
 	compteur = 0
 	for message, proba in liste:
 		if compteur <= pif and pif <= (compteur + int(proba)):
 			return message
 		else:
 			compteur += int(proba)
-	
+
 	return "LE DESSERT. REER"
-	
+
 
 def process_mentions():
 	f = open(get_chemin('sinceID'), 'rb')
@@ -75,11 +75,11 @@ def process_mentions():
 
 def process_retweet():
 	retour = twitter.search_tweet("\"le dessert\"")
-	
+
 	# print(json.dumps(retour, sort_keys=True, indent=4, separators=(',', ': ')))
-	
+
 	twitter.retweet_tweet(retour['statuses'][0]['id_str'])
-	
+
 
 def process_mps():
 	print("Le footballeur")
@@ -90,7 +90,7 @@ def process_mps():
 
 def dessert_waifu(tweet):
 	file = open(get_chemin('waifus'), 'rb')
-	
+
 	liste = map(tuple, csv.reader(file))
 
 	file.close()
@@ -118,7 +118,7 @@ def dessert_waifu(tweet):
 
 def parle_avec_dessert(tweet):
 	file = open(get_chemin('fonds'), 'rb')
-	
+
 	liste = map(tuple, csv.reader(file))
 
 	file.close()
@@ -164,10 +164,10 @@ def gen_image(tuple, texte, v_cent = True, h_cent = True):
 	# texte = texte.decode('utf-8')
 
 	texte = unichr(171) + texte + unichr(187)
-	
+
 	# font = ImageFont.truetype(<font-file>, <font-size>)
 	font = ImageFont.truetype("{}/fonts/{}".format(get_chemin("path"), tuple[10]), int(tuple[4]), encoding="utf-8")
-	
+
 	# lines = [unicode(temp1, errors='replace') for temp1 in textwrap.wrap(texte, width=int(tuple[5]))]
 	lines = textwrap.wrap(texte, width=int(tuple[5]))
 
